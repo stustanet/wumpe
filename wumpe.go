@@ -16,9 +16,8 @@ import (
 )
 
 type config struct {
-	Listen    string
-	LogStdout bool
-	Hooks     map[string]struct {
+	Listen string
+	Hooks  map[string]struct {
 		Ref    string
 		Secret string
 		Dir    string
@@ -102,10 +101,6 @@ func main() {
 
 	if err := toml.NewDecoder(f).Decode(&cfg); err != nil {
 		panic(err)
-	}
-
-	if cfg.LogStdout {
-		log.SetOutput(os.Stdout)
 	}
 
 	http.HandleFunc("/", Index)
