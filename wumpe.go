@@ -76,11 +76,11 @@ func Index(w http.ResponseWriter, req *http.Request) {
 		sendErr(w, http.StatusInternalServerError)
 		return
 	}
+	log.Println(string(out))
 	if !bytes.HasPrefix(out, []byte("Updating ")) {
 		// no new commits
 		return
 	}
-	log.Println(string(out))
 
 	cmd = exec.Command(hook.Cmd)
 	cmd.Dir = hook.Dir
