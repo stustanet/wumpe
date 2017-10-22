@@ -93,7 +93,7 @@ func Index(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	f, err := os.Open("wumpe.toml")
+	f, err := os.Open("/etc/wumpe.toml")
 	if err != nil {
 		panic(err)
 	}
