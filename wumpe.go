@@ -17,7 +17,7 @@ import (
 
 type config struct {
 	Listen    string
-	LogStderr bool
+	LogStdout bool
 	Hooks     map[string]struct {
 		Ref    string
 		Secret string
@@ -94,8 +94,6 @@ func Index(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	log.SetOutput(os.Stdout)
-
 	f, err := os.Open("wumpe.toml")
 	if err != nil {
 		panic(err)
@@ -104,6 +102,10 @@ func main() {
 
 	if err := toml.NewDecoder(f).Decode(&cfg); err != nil {
 		panic(err)
+	}
+
+	if cfg.LogStdout {
+		log.SetOutput(os.Stdout)
 	}
 
 	http.HandleFunc("/", Index)
