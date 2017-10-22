@@ -80,7 +80,7 @@ func Index(w http.ResponseWriter, req *http.Request) {
 		// no new commits
 		return
 	}
-	log.Println(out)
+	log.Println(string(out))
 
 	cmd = exec.Command(hook.Cmd)
 	cmd.Dir = hook.Dir
@@ -89,7 +89,7 @@ func Index(w http.ResponseWriter, req *http.Request) {
 		sendErr(w, http.StatusInternalServerError)
 		return
 	}
-	log.Println(out)
+	log.Println(string(out))
 }
 
 func main() {
