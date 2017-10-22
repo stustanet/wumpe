@@ -1,0 +1,23 @@
+[Unit]
+Description=Wumpe Webhook Build System
+
+[Service]
+ExecStart=/usr/local/bin/wumpe
+Restart=on-failure
+
+NonBlocking=true
+
+WorkingDirectory=/var/www/
+User=hugo
+Group=www-data
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+PrivateDevices=yes
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target
