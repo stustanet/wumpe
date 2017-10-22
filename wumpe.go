@@ -77,7 +77,8 @@ func Index(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	log.Println(string(out))
-	if !bytes.HasPrefix(out, []byte("Updating ")) {
+	out = bytes.TrimSpace(out)
+	if bytes.HasPrefix(out, []byte("Already up-to-date")) {
 		// no new commits
 		return
 	}
