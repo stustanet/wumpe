@@ -39,7 +39,7 @@ func sendErr(w http.ResponseWriter, code int) {
 	http.Error(w, http.StatusText(code), code)
 }
 
-func Index(w http.ResponseWriter, req *http.Request) {
+func Build(w http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" || req.URL.Path != "/build" {
 		sendErr(w, http.StatusTeapot)
 		return
@@ -72,11 +72,11 @@ func Index(w http.ResponseWriter, req *http.Request) {
 	cmd := exec.Command("/usr/bin/git", "pull")
 	cmd.Dir = hook.Dir
 	out, err := cmd.CombinedOutput()
+	log.Println(string(out))
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError)
 		return
 	}
-	log.Println(string(out))
 	out = bytes.TrimSpace(out)
 	if bytes.HasPrefix(out, []byte("Already up-to-date")) {
 		// no new commits
@@ -86,11 +86,11 @@ func Index(w http.ResponseWriter, req *http.Request) {
 	cmd = exec.Command(hook.Cmd)
 	cmd.Dir = hook.Dir
 	out, err = cmd.CombinedOutput()
+	log.Println(string(out))
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError)
 		return
 	}
-	log.Println(string(out))
 }
 
 func main() {
@@ -104,6 +104,6 @@ func main() {
 		panic(err)
 	}
 
-	http.HandleFunc("/", Index)
+	http.HandleFunc("/", Build)
 	log.Fatal(http.ListenAndServe(cfg.Listen, nil))
 }
