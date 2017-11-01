@@ -80,6 +80,8 @@ func Build(w http.ResponseWriter, req *http.Request) {
 	out = bytes.TrimSpace(out)
 	if bytes.HasPrefix(out, []byte("Already up-to-date")) {
 		// no new commits
+		w.WriteHeader(http.StatusConflict)
+		w.Write("Already up-to-date\n")
 		return
 	}
 
