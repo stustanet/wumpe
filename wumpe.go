@@ -78,7 +78,7 @@ func Build(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	out = bytes.TrimSpace(out)
-	var gitUnchanged = []byte("Already up-to-date.\n")
+	var gitUnchanged = []byte("Already up-to-date.")
 	if bytes.HasPrefix(out, gitUnchanged) {
 		// no new commits
 		w.WriteHeader(http.StatusConflict)
