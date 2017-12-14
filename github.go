@@ -5,11 +5,17 @@
 package main
 
 import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 type githubRequest struct {
+	Ref  string `json:"ref"`
 	Hook struct {
 		Events []string `json:"events"`
 		Config struct {
@@ -21,26 +27,61 @@ type githubRequest struct {
 	}
 }
 
-func parseGitHubRequest(req *http.Request) (project, secret string) {
-	var jr githubRequest
-	jd := json.NewDecoder(req.Body)
-	err := jd.Decode(&jr)
+func parseGitHubRequest(req *http.Request) (h hook, status int) {
+	if req.Header.Get("X-GitHub-Event") != "push" {
+		status = http.StatusBadRequest
+		return
+	}
+
+	signature := req.Header.Get("X-Hub-Signature")
+	// signature must have 5 bytes prefix + 40 bytes SHA1 HMAC
+	if len(signature) != 45 || !strings.HasPrefix(signature, "sha1=") {
+		status = http.StatusBadRequest
+		return
+	}
+
+	payload, err := ioutil.ReadAll(req.Body)
 	if err != nil {
+		status = http.StatusBadRequest
 		return
 	}
 
-	var push bool
-	for _, event := range jr.Hook.Events {
-		if event == "push" {
-			push = true
-			break
-		}
-	}
-	if !push {
+	// try to parse request to JSON
+	var jr githubRequest
+	err = json.Unmarshal(payload, &jr)
+	if err != nil {
+		status = http.StatusBadRequest
 		return
 	}
 
-	project = jr.Repository.Name
-	secret = jr.Hook.Config.Secret
+	// check if a handler exists for this project
+	h, ok := cfg.Hooks[jr.Repository.Name]
+	if !ok {
+		status = http.StatusTeapot
+		return
+	}
+
+	// check if the ref matches
+	if jr.Ref != h.Ref {
+		status = http.StatusTeapot
+		return
+	}
+
+	// decode signature from hex to binary format
+	var buf [20]byte
+	receivedMAC := buf[:]
+	hex.Decode(receivedMAC, []byte(signature[5:]))
+
+	// check if the secret matches by computing the HMAC for the given body with
+	// the secret and compare it with the signature in the request.
+	mac := hmac.New(sha1.New, []byte(h.Secret))
+	mac.Write(payload)
+	expectedMAC := mac.Sum(nil)
+	if !hmac.Equal(expectedMAC, receivedMAC) {
+		status = http.StatusForbidden
+		return
+	}
+
+	status = http.StatusOK
 	return
 }

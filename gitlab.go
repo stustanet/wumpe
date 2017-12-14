@@ -17,19 +17,39 @@ type gitlabRequest struct {
 	}
 }
 
-func parseGitLabRequest(req *http.Request) (project, secret string) {
+func parseGitLabRequest(req *http.Request) (h hook, status int) {
 	var jr gitlabRequest
 	jd := json.NewDecoder(req.Body)
 	err := jd.Decode(&jr)
 	if err != nil {
+		status = http.StatusBadRequest
 		return
 	}
 
 	if jr.ObjectKind != "push" {
+		status = http.StatusBadRequest
 		return
 	}
 
-	project = jr.Project.Name
-	secret = req.Header.Get("X-Gitlab-Token")
+	// check if a handler exists for this project
+	h, ok := cfg.Hooks[jr.Project.Name]
+	if !ok {
+		status = http.StatusTeapot
+		return
+	}
+
+	// check if the ref matches
+	if jr.Ref != h.Ref {
+		status = http.StatusTeapot
+		return
+	}
+
+	// check if the secret matches
+	if req.Header.Get("X-Gitlab-Token") != h.Secret {
+		status = http.StatusForbidden
+		return
+	}
+
+	status = http.StatusOK
 	return
 }
