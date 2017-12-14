@@ -3,11 +3,13 @@ listen = "127.0.0.1:1337"
 [hooks]
 
         [hooks.stusta-website]
+        ref = "refs/heads/master"
         secret = "very_secure_tm"
         dir = "/var/www/stusta-website"
         cmd = "/usr/local/bin/hugo"
 
         [hooks.stustanet-website]
+        ref = "refs/heads/master"
         secret = "much_complex_very_secure"
         dir = "/var/www/stustanet-website"
         cmd = "/usr/local/bin/hugo"
