@@ -6,11 +6,11 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/naoina/toml"
 )
@@ -22,14 +22,6 @@ type config struct {
 		Secret string
 		Dir    string
 		Cmd    string
-	}
-}
-
-type request struct {
-	ObjectKind string `json:"object_kind"`
-	Ref        string `json:"ref"`
-	Project    struct {
-		Name string `json:"name"`
 	}
 }
 
@@ -45,30 +37,35 @@ func Build(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var jr request
-	jd := json.NewDecoder(req.Body)
-	err := jd.Decode(&jr)
-	if err != nil {
+	var project string
+	var secret string
+
+	// try to detect which type of request (GitLab or GitHub) this is
+	switch {
+	case strings.HasPrefix(req.UserAgent(), "GitHub-Hookshot/"):
+		project, secret = parseGitHubRequest(req)
+	case req.Header.Get("X-Gitlab-Token") != "":
+		project, secret = parseGitLabRequest(req)
+	}
+	if project == "" || secret == "" {
 		sendErr(w, http.StatusBadRequest)
 		return
 	}
 
-	if jr.ObjectKind != "push" {
-		sendErr(w, http.StatusBadRequest)
-		return
-	}
-
-	hook, ok := cfg.Hooks[jr.Project.Name]
+	// check if a handler exists for this project
+	hook, ok := cfg.Hooks[project]
 	if !ok {
 		sendErr(w, http.StatusTeapot)
 		return
 	}
 
-	if jr.Ref != hook.Ref || req.Header.Get("X-Gitlab-Token") != hook.Secret {
+	// check if the secret matches
+	if secret != hook.Secret {
 		sendErr(w, http.StatusForbidden)
 		return
 	}
 
+	// pull the updates
 	cmd := exec.Command("/usr/bin/git", "pull")
 	cmd.Dir = hook.Dir
 	out, err := cmd.CombinedOutput()
@@ -86,6 +83,7 @@ func Build(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// if new commits were pulled, call the hook command
 	cmd = exec.Command(hook.Cmd)
 	cmd.Dir = hook.Dir
 	out, err = cmd.CombinedOutput()
