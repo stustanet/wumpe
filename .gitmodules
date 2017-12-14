@@ -1,0 +1,3 @@
+[submodule "vendor/github.com/naoina/toml"]
+	path = vendor/github.com/naoina/toml
+	url = https://github.com/naoina/toml.git
