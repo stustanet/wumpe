@@ -72,7 +72,8 @@ func Build(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// if new commits were pulled, call the hook command
-	cmd = exec.Command(h.Cmd)
+	args := strings.Fields(h.Cmd)
+	cmd = exec.Command(args[0], args[1:]...)
 	cmd.Dir = h.Dir
 	out, err = cmd.CombinedOutput()
 	log.Println(string(out))
