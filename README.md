@@ -7,7 +7,7 @@ Wumpe is a simple auto build & deploy system which listens for GitHub or GitLab 
 Make sure [Go is correctly installed and configured](https://golang.org/doc/install) and a `$GOPATH` is set.
 In the following we assume that `$GOBIN=/usr/local/bin`.
 
-1. Get source code: `go get -u github.com/stustanet/wumpe`
+1. Get source code, build and install Wumpe: `go get -u github.com/stustanet/wumpe`
 2. `cd $GOPATH/src/github.com/stustanet/wumpe`
 3. `cp systemd/wumpe.service /etc/systemd/system/wumpe.service`
 4. `cp wumpe.toml.sample /etc/wumpe.toml` and adjust it.
