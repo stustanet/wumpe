@@ -20,6 +20,7 @@ run-build:
     - mv ../wumpe*.changes build/
     - mv ../wumpe*.tar.gz build/
     - mv ../wumpe*.dsc build/
+    - mv ../wumpe*.buildinfo build/
 
   # This stage is only executed for new tags
   only:
