@@ -14,7 +14,7 @@ run-build:
   stage: build
   script:
     - apt-get install -y golang-go golang-github-naoina-toml-dev
-    - dpkg-buildpackage -b -us -uc
+    - dpkg-buildpackage -us -uc
     - mkdir build
     - mv ../wumpe*.deb build/
     - mv ../wumpe*.changes build/
