@@ -18,6 +18,7 @@ run-build:
     - mkdir build
     - mv ../wumpe*.deb build/
     - mv ../wumpe*.changes build/
+    - mv ../wumpe*.tar.gz build/
 
   # This stage is only executed for new tags
   only:
