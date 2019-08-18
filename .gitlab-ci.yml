@@ -39,6 +39,7 @@ upload:
   stage: upload
   script:
     - echo "Uploading debian package to ssn repository"
+    - ssh repo@repo.stusta.mhn.de "echo SSH-Connection working"
     - dupload -f -t ssn_repo build/wumpe*.changes
   when: manual
   only: 
