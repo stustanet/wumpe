@@ -39,7 +39,7 @@ upload:
   stage: upload
   script:
     - echo "Uploading debian package to ssn repository"
-    - dupload -f build/wumpe*.changes
+    - dupload -f -t ssn_repo build/wumpe*.changes
   when: manual
   only: 
     - master
