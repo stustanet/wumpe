@@ -1,16 +1,24 @@
 default:
-  image: debian-buster-go-builder:v1
+  image: debian-buster-go-builder:v2
 
 # Is performed before the scripts in the stages step
 before_script:
   - source /etc/profile
+  # Load the ssh private key from the gitlab build variables to enable dupload
+  # to connect to the repo via scp
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
 
 # Defines stages which are to be executed
 stages:
   - build
+  - upload
 
 # Stage "build"
-run-build:
+build:
   stage: build
   script:
     - apt-get install -y golang-go golang-github-naoina-toml-dev
@@ -22,12 +30,16 @@ run-build:
     - mv ../wumpe*.dsc build/
     - mv ../wumpe*.buildinfo build/
 
-  # This stage is only executed for new tags
-  only:
-    - tags
-
   # The files which are to be made available in GitLab
   artifacts:
     paths:
       - build/*
 
+deploy:
+    stage: deploy
+    script:
+        - echo "Uploading debian package to ssn repository"
+        - dupload -f build/wumpe*.changes
+    when: manual
+    only: 
+      - master
