@@ -35,11 +35,11 @@ build:
     paths:
       - build/*
 
-deploy:
-    stage: deploy
-    script:
-        - echo "Uploading debian package to ssn repository"
-        - dupload -f build/wumpe*.changes
-    when: manual
-    only: 
-      - master
+upload:
+  stage: upload
+  script:
+    - echo "Uploading debian package to ssn repository"
+    - dupload -f build/wumpe*.changes
+  when: manual
+  only: 
+    - master
