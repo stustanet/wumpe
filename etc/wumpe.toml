@@ -1,0 +1,13 @@
+# ip:port on which to listen for git hooks
+listen = "127.0.0.1:1337"
+
+[hooks]
+# multiple instances of hooks.<name>
+    #[hooks.<name>]
+    # git ref
+    #ref = "<github/gitlab ref>"
+    #secret = "<secret>"
+    # directory where the command is executed
+    #dir = "<dir>"
+    # command to be executed on git hook
+    #cmd = "<cmd>"
