@@ -1,4 +1,4 @@
-wumpe (1.2) stretch,buster; urgency=medium
+wumpe (1.2) stretch buster; urgency=medium
 
   * also build for stretch
 
