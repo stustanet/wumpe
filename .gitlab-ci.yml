@@ -16,16 +16,16 @@ before_script:
 
 # Defines stages which are to be executed
 stages:
-  - build
-  - upload
+  - build_buster
+  - upload_to_repo
 
-# Stage "build"
-build:
-  stage: build
+# Stage "build_buster"
+build_buster:
+  stage: build_buster
   script:
     - apt-get install -y golang-go golang-github-naoina-toml-dev
     - dpkg-buildpackage -us -uc
-    - mkdir build
+    - mkdir -p build/
     - mv ../wumpe*.deb build/
     - mv ../wumpe*.changes build/
     - mv ../wumpe*.tar.gz build/
@@ -37,8 +37,8 @@ build:
     paths:
       - build/*
 
-upload:
-  stage: upload
+upload_to_repo:
+  stage: upload_to_repo
   script:
     - echo "Uploading debian package to ssn repository"
     - ssh repo@repo.stusta.mhn.de "echo SSH-Connection working"
