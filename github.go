@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -28,7 +29,9 @@ type githubRequest struct {
 }
 
 func parseGitHubRequest(req *http.Request) (h hook, status int) {
-	if req.Header.Get("X-GitHub-Event") != "push" {
+	event := req.Header.Get("X-GitHub-Event")
+	if event != "push" {
+		log.Println("wrong event kind:", event)
 		status = http.StatusBadRequest
 		return
 	}
@@ -36,12 +39,14 @@ func parseGitHubRequest(req *http.Request) (h hook, status int) {
 	signature := req.Header.Get("X-Hub-Signature")
 	// signature must have 5 bytes prefix + 40 bytes SHA1 HMAC
 	if len(signature) != 45 || !strings.HasPrefix(signature, "sha1=") {
+		log.Println("signature missing")
 		status = http.StatusBadRequest
 		return
 	}
 
 	payload, err := ioutil.ReadAll(req.Body)
 	if err != nil {
+		log.Println("reading payload error:", err)
 		status = http.StatusBadRequest
 		return
 	}
@@ -50,6 +55,7 @@ func parseGitHubRequest(req *http.Request) (h hook, status int) {
 	var jr githubRequest
 	err = json.Unmarshal(payload, &jr)
 	if err != nil {
+		log.Println("decode error:", err)
 		status = http.StatusBadRequest
 		return
 	}
@@ -57,12 +63,14 @@ func parseGitHubRequest(req *http.Request) (h hook, status int) {
 	// check if a handler exists for this project
 	h, ok := cfg.Hooks[jr.Repository.Name]
 	if !ok {
+		log.Println("hook not found:", jr.Repository.Name)
 		status = http.StatusTeapot
 		return
 	}
 
 	// check if the ref matches
 	if jr.Ref != h.Ref {
+		log.Println("ref mismatch:", h.Ref)
 		status = http.StatusTeapot
 		return
 	}

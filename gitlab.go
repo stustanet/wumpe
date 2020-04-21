@@ -6,6 +6,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -22,11 +23,13 @@ func parseGitLabRequest(req *http.Request) (h hook, status int) {
 	jd := json.NewDecoder(req.Body)
 	err := jd.Decode(&jr)
 	if err != nil {
+		log.Println("decode error:", err)
 		status = http.StatusBadRequest
 		return
 	}
 
 	if jr.ObjectKind != "push" {
+		log.Println("wrong kind:", jr.ObjectKind)
 		status = http.StatusBadRequest
 		return
 	}
@@ -34,12 +37,14 @@ func parseGitLabRequest(req *http.Request) (h hook, status int) {
 	// check if a handler exists for this project
 	h, ok := cfg.Hooks[jr.Project.Name]
 	if !ok {
+		log.Println("hook not found:", jr.Project.Name)
 		status = http.StatusTeapot
 		return
 	}
 
 	// check if the ref matches
 	if jr.Ref != h.Ref {
+		log.Println("ref mismatch:", h.Ref)
 		status = http.StatusTeapot
 		return
 	}

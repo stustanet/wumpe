@@ -35,6 +35,7 @@ func sendErr(w http.ResponseWriter, code int) {
 
 func Build(w http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" || req.URL.Path != "/build" {
+		log.Println(req.Method, req.URL.Path)
 		sendErr(w, http.StatusTeapot)
 		return
 	}
@@ -59,6 +60,7 @@ func Build(w http.ResponseWriter, req *http.Request) {
 	out, err := cmd.CombinedOutput()
 	log.Println(string(out))
 	if err != nil {
+		log.Println("git error:", err)
 		sendErr(w, http.StatusInternalServerError)
 		return
 	}
@@ -78,6 +80,7 @@ func Build(w http.ResponseWriter, req *http.Request) {
 	out, err = cmd.CombinedOutput()
 	log.Println(string(out))
 	if err != nil {
+		log.Println("cmd error:", err)
 		sendErr(w, http.StatusInternalServerError)
 		return
 	}
