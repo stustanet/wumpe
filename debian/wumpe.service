@@ -2,7 +2,7 @@
 Description=Wumpe Webhook Build System
 
 [Service]
-ExecStart=/usr/local/bin/wumpe
+ExecStart=/usr/bin/wumpe
 Restart=on-failure
 
 NonBlocking=true
