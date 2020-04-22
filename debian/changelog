@@ -1,4 +1,10 @@
-wumpe (1.3) buster; urgency=medium
+wumpe (1.3.1) buster; urgency=medium
+
+  * Debian does not support multi-distro builds
+
+ -- Julien Schmidt <js@stusta.net>  Wed, 22 Apr 2020 13:16:12 +0200
+
+wumpe (1.3) stretch buster; urgency=medium
 
   * verbose logging
   * fix path of binary in systemd unit
