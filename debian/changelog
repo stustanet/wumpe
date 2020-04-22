@@ -1,4 +1,4 @@
-wumpe (1.3) stretch buster; urgency=medium
+wumpe (1.3) buster; urgency=medium
 
   * verbose logging
   * fix path of binary in systemd unit
