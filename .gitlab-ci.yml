@@ -16,7 +16,7 @@ before_script:
 
 # Defines stages which are to be executed
 stages:
-  - build_buster
+  - build_bullseye
   - upload_to_repo
 
 build_bullseye:
