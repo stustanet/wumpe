@@ -1,5 +1,5 @@
 default:
-  image: debian-buster-go-builder:v2
+  image: debian-bullseye-go-builder:v1
 
 # Is performed before the scripts in the stages step
 before_script:
@@ -19,9 +19,8 @@ stages:
   - build_buster
   - upload_to_repo
 
-# Stage "build_buster"
-build_buster:
-  stage: build_buster
+build_bullseye:
+  stage: build_bullseye
   script:
     - apt-get install -y golang-go golang-github-naoina-toml-dev
     - dpkg-buildpackage -us -uc
