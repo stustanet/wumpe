@@ -24,7 +24,7 @@ build_bullseye:
   script:
     - apt-get install -y golang-go
     - mkdir $PWD/.go/
-    - export GOPATH=$PWD/.go/
+    - export GOPATH=$PWD/obj-x86_64-linux-gnu/
     - go get
     - echo $GOPATH
     - ls $GOPATH
