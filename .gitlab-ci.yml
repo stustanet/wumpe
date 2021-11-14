@@ -25,7 +25,6 @@ build_bullseye:
     - apt-get install -y golang-go
     - export GO111MODULE=on
     - export GOFLAGS=-mod=vendor
-    - export GOCACHE=on
     - go mod vendor
     - dpkg-buildpackage -us -uc
     - mkdir -p build/
