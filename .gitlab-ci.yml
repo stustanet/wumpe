@@ -1,5 +1,5 @@
 default:
-  image: debian-bullseye-go-builder:v1
+  image: debian-go-build:bullseye
 
 # Is performed before the scripts in the stages step
 before_script:
