@@ -23,6 +23,8 @@ build_bullseye:
   stage: build_bullseye
   script:
     - apt-get install -y golang-go
+    - mkdir $PWD/.go/
+    - export GOPATH=$PWD/.go/
     - go get
     - echo $GOPATH
     - ls $GOPATH
