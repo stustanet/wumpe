@@ -24,6 +24,8 @@ build_bullseye:
   script:
     - apt-get install -y golang-go
     - go get
+    - echo $GOPATH
+    - ls $GOPATH
     - dpkg-buildpackage -us -uc
     - mkdir -p build/
     - mv ../wumpe*.deb build/
