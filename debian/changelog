@@ -1,3 +1,9 @@
+wumpe (1.4.1) bullseye; urgency=medium
+
+  * fixed debian packaging
+
+ -- Julien Schmidtr <js@stusta.net>  Fri, 14 Nov 2021 16:17:00 +0200
+
 wumpe (1.4.0) bullseye; urgency=medium
 
   * upgrade to bullseye
