@@ -5,8 +5,7 @@ Maintainer: StuStaNet <admins@stusta.de>
 Uploaders: Michael Loipfuehrer
 Build-Depends: debhelper (>= 11),
                dh-golang,
-               golang-go,
-	       golang-github-naoina-toml-dev
+               golang-go
 Standards-Version: 4.2.1
 Homepage: https://gitlab.stusta.de/stustanet/wumpe
 Vcs-Browser: https://gitlab.stusta.de/stustanet/wumpe
