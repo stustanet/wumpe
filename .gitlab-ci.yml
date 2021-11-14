@@ -23,11 +23,9 @@ build_bullseye:
   stage: build_bullseye
   script:
     - apt-get install -y golang-go
-    - mkdir $PWD/.go/
-    - export GOPATH=$PWD/obj-x86_64-linux-gnu/
-    - go get
-    - echo $GOPATH
-    - ls $GOPATH
+    - export GO111MODULE=on
+    - export GOFLAGS=-mod=vendor
+    - export GOCACHE=on
     - dpkg-buildpackage -us -uc
     - mkdir -p build/
     - mv ../wumpe*.deb build/
